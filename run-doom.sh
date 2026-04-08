@@ -20,7 +20,23 @@ if [ "${#GZDOOM_PATH[@]}" -gt 1 ]; then
 		done
 	done
 fi
-echo $doom_path
+
+# Select IWAD
+wad_path=$IWAD_PATH
+if [ "${#IWAD_PATH[@]}" -gt 1 ]; then
+	echo "Multiple IWADs versions loaded. Select an IWAD:"
+	select iwad_opt in "${IWAD_PATH[@]}"; do
+		for entry in "${IWAD_PATH[@]}"; do
+			name="${entry%%|*}"
+			iwad_opt_name="${iwad_opt%%|*}"
+			if [ "$name" = "$iwad_opt_name" ]; then
+				iwad_path="${entry##*|}"
+				wad_path="$iwad_path"
+				break 2
+			fi
+		done
+	done
+fi
 
 # Select Mod
 echo "Select a mod to run:"
@@ -31,9 +47,9 @@ select opt in "${MODS[@]}"; do
 		if [ "$name" = "$opt_name" ]; then
 			path="${entry##*|}"
 			if [ "$path" = "none" ]; then
-				"$doom_path" -iwad "$IWAD_PATH"
+				"$doom_path" -iwad "$wad_path"
 			else
-				"$doom_path" -iwad "$IWAD_PATH" -file "$path"
+				"$doom_path" -iwad "$wad_path" -file "$path"
 			fi
 			break 2
 		fi
