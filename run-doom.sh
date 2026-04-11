@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Running Doom Sh(ell)"
+echo "=== Running Doom Sh(ell) ==="
 
 # Load Config
 source "$(dirname "$0")/config.env"
@@ -30,19 +30,18 @@ select_option() {
 
 # Select GZDoom Version
 if [ "${#GZDOOM_PATH[@]}" -gt 1 ]; then
-	echo "Multiple GZDoom versions loaded. Select a GZDoom version:"
+	echo "=> Multiple GZDoom versions loaded. Select a GZDoom version: "
 fi
 doom_path=$(select_option "${GZDOOM_PATH[@]}")
 
 # Select IWAD
-
 if [ "${#IWAD_PATH[@]}" -gt 1 ]; then
-	echo "Multiple IWADs versions loaded. Select an IWAD:"
+	echo "=> Multiple IWADs versions loaded. Select an IWAD:"
 fi
 wad_path=$(select_option "${IWAD_PATH[@]}")
 
 # Select Mod
-echo "Select a mod to run:"
+echo "=> Select a mod to run:"
 select opt in "${MODS[@]}"; do
 	for entry in "${MODS[@]}"; do
 		name="${entry%%|*}"
