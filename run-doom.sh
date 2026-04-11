@@ -4,39 +4,42 @@ echo "Running Doom Sh(ell)"
 # Load Config
 source "$(dirname "$0")/config.env"
 
+# Given a list, prompt user to select an option
+# Automatically handles cases of a single item in an array
+select_option() {
+	local option_array=("$@")
+
+	if [ "${#option_array[@]}" -eq 1 ]; then
+		echo $option_array
+		return 0
+	fi
+
+	select opt in "${option_array[@]}"; do
+		for entry in "${option_array[@]}"; do
+			entry_name="${entry%%|*}"
+			opt_name="${opt%%|*}"
+			if [ "$entry_name" = "$opt_name" ]; then
+				option_path="${entry##*|}"
+				echo "$option_path"
+				break 2
+			fi
+		done
+	done
+
+}
+
 # Select GZDoom Version
-doom_path=$GZDOOM_PATH
 if [ "${#GZDOOM_PATH[@]}" -gt 1 ]; then
 	echo "Multiple GZDoom versions loaded. Select a GZDoom version:"
-	select gz_opt in "${GZDOOM_PATH[@]}"; do
-		for entry in "${GZDOOM_PATH[@]}"; do
-			name="${entry%%|*}"
-			gz_opt_name="${gz_opt%%|*}"
-			if [ "$name" = "$gz_opt_name" ]; then
-				gz_path="${entry##*|}"
-				doom_path="$gz_path"
-				break 2
-			fi
-		done
-	done
 fi
+doom_path=$(select_option "${GZDOOM_PATH[@]}")
 
 # Select IWAD
-wad_path=$IWAD_PATH
+
 if [ "${#IWAD_PATH[@]}" -gt 1 ]; then
 	echo "Multiple IWADs versions loaded. Select an IWAD:"
-	select iwad_opt in "${IWAD_PATH[@]}"; do
-		for entry in "${IWAD_PATH[@]}"; do
-			name="${entry%%|*}"
-			iwad_opt_name="${iwad_opt%%|*}"
-			if [ "$name" = "$iwad_opt_name" ]; then
-				iwad_path="${entry##*|}"
-				wad_path="$iwad_path"
-				break 2
-			fi
-		done
-	done
 fi
+wad_path=$(select_option "${IWAD_PATH[@]}")
 
 # Select Mod
 echo "Select a mod to run:"
